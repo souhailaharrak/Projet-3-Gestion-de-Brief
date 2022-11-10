@@ -1,12 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Apparent;
-use App\Models\apprent_brief;
+
 use App\Models\Brief;
+use App\Models\Tache;
+
+
 use Illuminate\Http\Request;
 
-class AssignerController extends Controller
+
+
+class BriefController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,8 +18,9 @@ class AssignerController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {$apprenant = Apparent::all();
-        return view('brief.assigner', compact('apprenant', $apprenant));
+    {
+        $brief = Brief::all();
+        return view("brief.index",compact("brief"));
     }
 
     /**
@@ -25,7 +30,7 @@ class AssignerController extends Controller
      */
     public function create()
     {
-        //
+        return view("brief.create");
     }
 
     /**
@@ -36,11 +41,20 @@ class AssignerController extends Controller
      */
     public function store(Request $request)
     {
-        apprent_brief::create([
-            'apprenant_id' => $request->apprenant_id,
-            'briefs_id' => $request->briefs_id,
+        $request->validate([
+
+          'name'=>'required',
         ]);
-        return back();
+        // Tache::create([
+        //     "name"=>$request->name,
+        //     "startDate"=>$request->startDate,
+        //     "endDate"=>$request->endDate,
+        //     "description"=>$request->description,
+        //     "brief_id"=>$request->brief_id,
+
+        // ]);
+        $brief=Brief::create($request->all());
+        return redirect()->route('brief.index');
     }
 
     /**
@@ -51,12 +65,7 @@ class AssignerController extends Controller
      */
     public function show($id)
     {
-        $apprenant = Apparent::all();
-        $ApprenantAssinger = Brief::find($id);
-
-           // dd($ApprenantAssinger->apprent);
-
-        return view('brief.assigner',compact('apprenant','ApprenantAssinger','id'));
+        //
     }
 
     /**
@@ -65,9 +74,11 @@ class AssignerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Brief $brief)
     {
-        //
+        $tache = Tache::all();
+        return view("brief.edit",compact('brief','tache'));
+
     }
 
     /**
@@ -77,9 +88,14 @@ class AssignerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,Brief $brief)
     {
-        //
+        $request->validate([
+
+            'name'=>'required',
+          ]);
+          $brief->update($request->all());
+          return redirect()->route('brief.index');
     }
 
     /**
@@ -88,13 +104,18 @@ class AssignerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy(Brief $brief)
     {
 
-        apprent_brief::where([
-            ['apprenant_id',$request->apprenant_id],
-            ['briefs_id',$request->briefs_id]
-            ])->delete();
-            return back();
+        $brief->delete();
+        return redirect('brief');
+
+    }
+    public function add_tache($id){
+
+        $brief= Brief::find($id);
+        return view('tache.create')->with([
+            "brief"=>$brief
+        ]);
     }
 }

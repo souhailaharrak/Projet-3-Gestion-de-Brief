@@ -54,7 +54,6 @@ class AssignerController extends Controller
         $apprenant = Apparent::all();
         $ApprenantAssinger = Brief::find($id);
 
-           // dd($ApprenantAssinger->apprent);
 
         return view('brief.assigner',compact('apprenant','ApprenantAssinger','id'));
     }
@@ -93,7 +92,7 @@ class AssignerController extends Controller
 
         apprent_brief::where([
             ['apprenant_id',$request->apprenant_id],
-            ['briefs_id',$request->briefs_id]
+            ['brief_id',$request->briefs_id]
             ])->delete();
             return back();
     }

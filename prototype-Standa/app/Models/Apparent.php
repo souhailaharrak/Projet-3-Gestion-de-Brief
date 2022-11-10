@@ -16,6 +16,6 @@ class Apparent extends Model
         return $this->belongsTo(Promotion::class);
     }
     public function Brief(){
-        return $this->belongsToMany(Brief::class,'briefs_apprants');
+        return $this->belongsToMany(Brief::class)->withDefault();
     }
 }

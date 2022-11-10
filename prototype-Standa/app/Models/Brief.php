@@ -20,9 +20,7 @@ class Brief extends Model
 
       return  $this->hasMany(Tache::class);
     }
-
-
     public function apprent(){
-        return $this->belongsToMany(Apparent::class,'briefs_apprants','briefs_id','apprenant_id');
+        return $this->belongsToMany(Apparent::class)->withDefault();
     }
 }

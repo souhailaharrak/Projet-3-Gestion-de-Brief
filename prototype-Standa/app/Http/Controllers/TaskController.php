@@ -1,21 +1,25 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Apparent;
-use App\Models\apprent_brief;
 use App\Models\Brief;
-use Illuminate\Http\Request;
 
-class AssignerController extends Controller
+
+use Illuminate\Http\Request;
+use App\Models\Tache;
+
+class TaskController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {$apprenant = Apparent::all();
-        return view('brief.assigner', compact('apprenant', $apprenant));
+    public function index(Request $request)
+    {
+        $id = $request->brief_id;
+        $tache= Brief::find($id)->taches;
+
+        return view("tache.index",compact("tache","id"));
     }
 
     /**
@@ -23,9 +27,11 @@ class AssignerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $id = $request->brief_id;
+
+        return view("tache.create",compact("id"));
     }
 
     /**
@@ -36,11 +42,15 @@ class AssignerController extends Controller
      */
     public function store(Request $request)
     {
-        apprent_brief::create([
-            'apprenant_id' => $request->apprenant_id,
-            'briefs_id' => $request->briefs_id,
-        ]);
+        $tache = new Tache();
+        $tache->name= $request->name;
+        $tache->startDate= $request->startDate;
+        $tache->endDate= $request->endDate;
+        $tache->description= $request->description;
+        $tache->brief_id= $request->brief_id;
+        $tache->save();
         return back();
+        // return redirect('brief/'.$request->brief_id .'/edit');
     }
 
     /**
@@ -51,12 +61,7 @@ class AssignerController extends Controller
      */
     public function show($id)
     {
-        $apprenant = Apparent::all();
-        $ApprenantAssinger = Brief::find($id);
-
-           // dd($ApprenantAssinger->apprent);
-
-        return view('brief.assigner',compact('apprenant','ApprenantAssinger','id'));
+        //
     }
 
     /**
@@ -67,7 +72,9 @@ class AssignerController extends Controller
      */
     public function edit($id)
     {
-        //
+        $tache = Tache::find($id);
+        $brief_id = $tache->brief_id;
+        return view("tache.edit",compact("tache","brief_id"));
     }
 
     /**
@@ -77,9 +84,14 @@ class AssignerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,Tache $tache)
     {
-        //
+        $request->validate([
+
+            'nom'=>'required',
+          ]);
+          $tache->update($request->all());
+          return redirect()->route('brief.index');
     }
 
     /**
@@ -88,13 +100,8 @@ class AssignerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy($id)
     {
-
-        apprent_brief::where([
-            ['apprenant_id',$request->apprenant_id],
-            ['briefs_id',$request->briefs_id]
-            ])->delete();
-            return back();
+        //
     }
 }
